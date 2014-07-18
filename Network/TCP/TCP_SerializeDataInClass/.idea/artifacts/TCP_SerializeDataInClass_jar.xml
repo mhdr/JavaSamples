@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="TCP_SerializeDataInClass:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/TCP_SerializeDataInClass_jar</output-path>
+    <root id="archive" name="TCP_SerializeDataInClass.jar">
+      <element id="module-output" name="TCP_SerializeDataInClass" />
+    </root>
+  </artifact>
+</component>

@@ -111,7 +111,7 @@ public class ClientWindow implements ClientEvent{
     }
 
     public void Load() throws IOException {
-        client=new Client("127.0.0.1",9001,this);
+        client=new Client(this);
     }
 
     public void InsertMsg(String msg)

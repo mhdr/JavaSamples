@@ -62,7 +62,7 @@ public class ServerWindow implements ServerEvent{
     }
 
     public void Load() throws IOException {
-        serverSocket=new ServerSocket(9001);
+        serverSocket=new ServerSocket(ServerConfig.getPortNumber());
 
         server=new Server(serverSocket,this);
         server.start();

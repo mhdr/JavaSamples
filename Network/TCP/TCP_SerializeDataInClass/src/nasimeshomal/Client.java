@@ -11,8 +11,8 @@ import java.net.UnknownHostException;
  */
 public class Client {
 
-    private int port=9001;
-    private String host="127.0.0.1";
+    private int port;
+    private String host;
     private ClientEvent clientEvent;
     private Thread thread;
     private boolean stopThread=false;
@@ -24,14 +24,14 @@ public class Client {
 
     public Client(String host,int port)
     {
-        this.host=host;
-        this.port=port;
+        this.host=ServerConfig.getServerIPAddress();
+        this.port=ServerConfig.getPortNumber();
     }
 
-    public Client(String host,int port,ClientEvent event)
+    public Client(ClientEvent event)
     {
-        this.host=host;
-        this.port=port;
+        this.host=ServerConfig.getServerIPAddress();
+        this.port=ServerConfig.getPortNumber();
         this.clientEvent=event;
     }
 

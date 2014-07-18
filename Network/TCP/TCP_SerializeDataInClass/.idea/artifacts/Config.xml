@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="Config">
+    <output-path>$PROJECT_DIR$/out/artifacts/TCP_SerializeDataInClass_jar</output-path>
+    <root id="root">
+      <element id="file-copy" path="$PROJECT_DIR$/Config.txt" />
+    </root>
+  </artifact>
+</component>
