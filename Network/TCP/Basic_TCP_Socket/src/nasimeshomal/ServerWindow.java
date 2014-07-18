@@ -4,9 +4,13 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
@@ -19,7 +23,8 @@ import java.net.ServerSocket;
 public class ServerWindow implements ServerEvent{
 
     private VBox vBoxMain;
-    private ScrollPane scrollPaneMain;
+    private ListView<String> listViewLog;
+    private ObservableList<String> listViewLogItems;
 
 
     private ServerSocket serverSocket;
@@ -27,33 +32,33 @@ public class ServerWindow implements ServerEvent{
 
     public Parent InitializeUI()
     {
+        InitializeListViewLog();
+
         InitializeVBoxMain();
 
-        InitializeScrollPaneMain();
-
-        return scrollPaneMain;
+        return vBoxMain;
     }
 
-    private void InitializeScrollPaneMain() {
-        scrollPaneMain=new ScrollPane(vBoxMain);
-        scrollPaneMain.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPaneMain.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPaneMain.setPrefSize(605,405);
+    private void InitializeListViewLog() {
+        listViewLog=new ListView();
+        listViewLogItems= FXCollections.observableArrayList();
+        listViewLog.setItems(listViewLogItems);
+        // autoscroll
+        listViewLogItems.addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> c) {
+                int lastItem=listViewLogItems.size()-1;
+                listViewLog.scrollTo(lastItem);
+            }
+        });
+        //
     }
 
     private void InitializeVBoxMain() {
         vBoxMain=new VBox();
         vBoxMain.setPrefHeight(400);
         vBoxMain.setPrefWidth(600);
-
-        // autoscroll
-        vBoxMain.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                scrollPaneMain.setVvalue(vBoxMain.getHeight()+5);
-            }
-        });
-        //
+        vBoxMain.getChildren().addAll(listViewLog);
     }
 
     public void Load() throws IOException {
@@ -72,9 +77,7 @@ public class ServerWindow implements ServerEvent{
 
     public void InsertMsg(String msg)
     {
-        Label label=new Label(msg);
-
-        vBoxMain.getChildren().addAll(label);
+        listViewLogItems.addAll(msg);
     }
 
     @Override

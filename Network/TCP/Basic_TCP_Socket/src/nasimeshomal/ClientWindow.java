@@ -27,7 +27,7 @@ public class ClientWindow implements ClientEvent{
     private Label labelName;
     private TextField textFieldName;
     private Button buttonSend;
-    private ListView listViewLog;
+    private ListView<String> listViewLog;
     private ObservableList<String> listViewLogItems;
 
     private Client client;
