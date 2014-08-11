@@ -1,2 +1,2 @@
-ServerIPAddress=192.168.17.128
+ServerIPAddress=127.0.0.1
 PortNumber=9002

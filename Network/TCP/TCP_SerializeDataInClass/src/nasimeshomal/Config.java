@@ -14,7 +14,21 @@ public class Config {
 
     public Config() throws IOException {
         String workingDir = System.getProperty("user.dir");
-        String pathToConfigFile=String.format("%s\\%s",workingDir,"Config.txt");
+
+        String osType=System.getProperty("os.name").toLowerCase();
+
+        String pathToConfigFile="";
+
+
+        if (osType.equals("linux"))
+        {
+             pathToConfigFile=String.format("%s/%s",workingDir,"Config.txt");
+        }
+        else
+        {
+             pathToConfigFile=String.format("%s\\%s",workingDir,"Config.txt");
+        }
+
 
         Properties properties=new Properties();
         InputStream inputStreamForProperties=new FileInputStream(pathToConfigFile);
