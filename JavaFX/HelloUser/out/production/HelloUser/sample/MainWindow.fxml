@@ -32,6 +32,9 @@
             <Insets left="2.0" right="5.0" />
          </GridPane.margin>
       </TextField>
-      <Button defaultButton="true" mnemonicParsing="false" onAction="#ShowMsg" text="Show" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Button defaultButton="true" mnemonicParsing="false" onAction="#ShowMsg" text="Show" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets left="5.0" />
+         </GridPane.margin></Button>
    </children>
 </GridPane>
