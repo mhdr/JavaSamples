@@ -14,21 +14,20 @@ public class Main {
         InputStream inputStream=socket.getInputStream();
         OutputStream outputStream=socket.getOutputStream();
 
-
-        String initialMsg="Hello World\n";
-        String msg="";
-
-        for (int i=0;i<100;i++)
-        {
-            msg +=initialMsg;
-        }
+        String msg="Mahmood";
 
         byte[] msgByte=msg.getBytes("UTF-8");
         int sizeOfMsg=msgByte.length;
-        byte[] sizeByte= ByteBuffer.allocate(4).putInt(sizeOfMsg).array();
+        byte[] sizeOfMsgByte= ByteBuffer.allocate(4).putInt(sizeOfMsg).array();
+        String methodName="sayHello";
+        byte[] methodNameByte=methodName.getBytes("UTF-8");
+        int sizeOfMethodName=methodNameByte.length;
+        byte[] sizeOfMethodNameByte=ByteBuffer.allocate(4).putInt(sizeOfMethodName).array();
 
         ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        byteArrayOutputStream.write(sizeByte);
+        byteArrayOutputStream.write(sizeOfMethodNameByte);
+        byteArrayOutputStream.write(methodNameByte);
+        byteArrayOutputStream.write(sizeOfMsgByte);
         byteArrayOutputStream.write(msgByte);
         byte[] data=byteArrayOutputStream.toByteArray();
 
