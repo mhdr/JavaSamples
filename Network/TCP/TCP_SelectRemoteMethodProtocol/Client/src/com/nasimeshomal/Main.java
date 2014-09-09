@@ -1,5 +1,7 @@
 package com.nasimeshomal;
 
+import com.nasimeshomal.RPC;
+
 import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -33,8 +35,15 @@ public class Main {
 
         outputStream.write(data);
         outputStream.flush();
-        outputStream.close();
 
+        RPC rpc= RPC.Deserialize(inputStream);
+
+        String returnedFromServer=new String(rpc.getData(),"UTF-8");
+
+        outputStream.close();
+        inputStream.close();
         socket.close();
+
+        System.out.println(returnedFromServer);
     }
 }

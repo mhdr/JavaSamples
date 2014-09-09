@@ -49,9 +49,15 @@ public class Main {
                 }
             }
 
-            Object returnValue= methodMatched.invoke(null,data);
+            byte[] returnValue= (byte[]) methodMatched.invoke(null,data);
 
-            System.out.println(msg);
+            RPC rpc=new RPC("",returnValue);
+            byte[] dataToSend=rpc.getData();
+
+            outputStream.write(dataToSend);
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
         }
     }
 }
