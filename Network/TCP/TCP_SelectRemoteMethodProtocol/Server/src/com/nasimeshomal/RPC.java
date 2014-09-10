@@ -3,7 +3,6 @@ package com.nasimeshomal;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
@@ -11,25 +10,36 @@ import java.nio.ByteBuffer;
  * Created by Mahmood on 9/9/2014.
  */
 public class RPC {
-    private SocketData socketData;
-    private Socket socket;
+    private String methodName;
+    private byte[] data;
 
-    public RPC(Socket socket)
-    {
-        this.setSocket(socket);
+    public String getMethodName() {
+        return methodName;
     }
 
-    public RPC(Socket socket,SocketData socketData)
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    public RPC(String methodName, byte[] data)
     {
-        this.setSocket(socket);
-        this.setSocketData(socketData);
+        this.setMethodName(methodName);
+        this.setData(data);
     }
 
     public byte[] Serialize() throws IOException {
-        byte[] msgByte=this.socketData.getData();
+        byte[] msgByte=this.getData();
         int sizeOfMsg=msgByte.length;
         byte[] sizeOfMsgByte= ByteBuffer.allocate(4).putInt(sizeOfMsg).array();
-        String methodNameToSend=this.socketData.getMethodName();
+        String methodNameToSend=this.getMethodName();
         byte[] methodNameByte=methodNameToSend.getBytes("UTF-8");
         int sizeOfMethodName=methodNameByte.length;
         byte[] sizeOfMethodNameByte=ByteBuffer.allocate(4).putInt(sizeOfMethodName).array();
@@ -44,16 +54,7 @@ public class RPC {
         return dataToSend;
     }
 
-    public void Send() throws IOException {
-        byte[] dataToSend= this.Serialize();
-        OutputStream outputStream=this.socket.getOutputStream();
-        outputStream.write(dataToSend);
-        outputStream.flush();
-        outputStream.close();
-    }
-
-    public SocketData Receive() throws IOException {
-        InputStream inputStream=this.socket.getInputStream();
+    public static RPC Deserialize(InputStream inputStream) throws IOException {
         byte[] sizeOfMethodNameByte=new byte[4];
         inputStream.read(sizeOfMethodNameByte);
         int sizeOfMethodName=ByteBuffer.wrap(sizeOfMethodNameByte).getInt();
@@ -65,30 +66,7 @@ public class RPC {
         inputStream.read(sizeofMsgByte);
         int sizeOfMsg= ByteBuffer.wrap(sizeofMsgByte).getInt();
         byte[] data=new byte[sizeOfMsg];
-        inputStream.read(data);
 
-        inputStream.close();
-
-        return new SocketData(methodName,data);
-    }
-
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
-
-    public SocketData getSocketData() {
-        return socketData;
-    }
-
-    public void setSocketData(SocketData socketData) {
-        this.socketData = socketData;
-    }
-
-    public void CloseSocket() throws IOException {
-        this.socket.close();
+        return new RPC(methodName,data);
     }
 }

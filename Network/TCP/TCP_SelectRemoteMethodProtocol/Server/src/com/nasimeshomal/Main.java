@@ -36,6 +36,8 @@ public class Main {
 
             String msg=new String(data,"UTF-8");
 
+            System.out.println(msg);
+
             Class<Greeting> aClass=Greeting.class;
             Method[] methods=aClass.getMethods();
 
@@ -52,7 +54,7 @@ public class Main {
             byte[] returnValue= (byte[]) methodMatched.invoke(null,data);
 
             RPC rpc=new RPC("",returnValue);
-            byte[] dataToSend=rpc.getData();
+            byte[] dataToSend=rpc.Serialize();
 
             outputStream.write(dataToSend);
             outputStream.flush();

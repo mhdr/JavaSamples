@@ -19,20 +19,10 @@ public class Main {
         String msg="Mahmood";
 
         byte[] msgByte=msg.getBytes("UTF-8");
-        int sizeOfMsg=msgByte.length;
-        byte[] sizeOfMsgByte= ByteBuffer.allocate(4).putInt(sizeOfMsg).array();
         String methodName="sayHello";
-        byte[] methodNameByte=methodName.getBytes("UTF-8");
-        int sizeOfMethodName=methodNameByte.length;
-        byte[] sizeOfMethodNameByte=ByteBuffer.allocate(4).putInt(sizeOfMethodName).array();
 
-        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        byteArrayOutputStream.write(sizeOfMethodNameByte);
-        byteArrayOutputStream.write(methodNameByte);
-        byteArrayOutputStream.write(sizeOfMsgByte);
-        byteArrayOutputStream.write(msgByte);
-        byte[] data=byteArrayOutputStream.toByteArray();
-
+        RPC rpc1=new RPC(methodName,msgByte);
+        byte[] data=rpc1.Serialize();
         outputStream.write(data);
         outputStream.flush();
 
