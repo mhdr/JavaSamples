@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
  * Created by Mahmood on 9/9/2014.
  */
 public class RPC {
-    private SocketData socketData;
     private Socket socket;
 
     public RPC(Socket socket)
@@ -19,17 +18,11 @@ public class RPC {
         this.setSocket(socket);
     }
 
-    public RPC(Socket socket,SocketData socketData)
-    {
-        this.setSocket(socket);
-        this.setSocketData(socketData);
-    }
-
-    public byte[] Serialize() throws IOException {
-        byte[] msgByte=this.socketData.getData();
+    public byte[] Serialize(SocketData socketData) throws IOException {
+        byte[] msgByte=socketData.getData();
         int sizeOfMsg=msgByte.length;
         byte[] sizeOfMsgByte= ByteBuffer.allocate(4).putInt(sizeOfMsg).array();
-        String methodNameToSend=this.socketData.getMethodName();
+        String methodNameToSend=socketData.getMethodName();
         byte[] methodNameByte=methodNameToSend.getBytes("UTF-8");
         int sizeOfMethodName=methodNameByte.length;
         byte[] sizeOfMethodNameByte=ByteBuffer.allocate(4).putInt(sizeOfMethodName).array();
@@ -44,12 +37,11 @@ public class RPC {
         return dataToSend;
     }
 
-    public void Send() throws IOException {
-        byte[] dataToSend= this.Serialize();
+    public void Send(SocketData socketData) throws IOException {
+        byte[] dataToSend= this.Serialize(socketData);
         OutputStream outputStream=this.socket.getOutputStream();
         outputStream.write(dataToSend);
         outputStream.flush();
-        outputStream.close();
     }
 
     public SocketData Receive() throws IOException {
@@ -66,9 +58,6 @@ public class RPC {
         int sizeOfMsg= ByteBuffer.wrap(sizeofMsgByte).getInt();
         byte[] data=new byte[sizeOfMsg];
         inputStream.read(data);
-
-        inputStream.close();
-
         return new SocketData(methodName,data);
     }
 
@@ -78,14 +67,6 @@ public class RPC {
 
     public void setSocket(Socket socket) {
         this.socket = socket;
-    }
-
-    public SocketData getSocketData() {
-        return socketData;
-    }
-
-    public void setSocketData(SocketData socketData) {
-        this.socketData = socketData;
     }
 
     public void CloseSocket() throws IOException {

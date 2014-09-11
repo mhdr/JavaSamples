@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/../Shared/out/artifacts/Shared_jar/Shared.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../Shared/src" />
+    </SOURCES>
   </library>
 </component>
