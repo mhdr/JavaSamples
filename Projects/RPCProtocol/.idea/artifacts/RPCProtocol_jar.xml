@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="RPCProtocol:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/RPCProtocol_jar</output-path>
+    <root id="archive" name="RPCProtocol.jar">
+      <element id="module-output" name="RPCProtocol" />
+    </root>
+  </artifact>
+</component>

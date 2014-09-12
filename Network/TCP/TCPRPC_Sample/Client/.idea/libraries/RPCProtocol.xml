@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="RPCProtocol">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../Projects/RPCProtocol/out/artifacts/RPCProtocol_jar/RPCProtocol.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../../../Projects/RPCProtocol/src" />
+    </SOURCES>
+  </library>
+</component>
