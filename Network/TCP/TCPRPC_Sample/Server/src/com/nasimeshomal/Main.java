@@ -16,7 +16,7 @@ public class Main {
             Socket socket=serverSocket.accept();
 
             TcpRPC tcpRPC=new TcpRPC(socket);
-            TcpPayload payload= tcpRPC.Receive2();
+            Payload payload= tcpRPC.Receive();
 
             System.out.println(payload.getMethodName());
             System.out.println(payload.getParameter());
@@ -24,8 +24,8 @@ public class Main {
             MethodInvoker methodInvoker=new MethodInvoker(Greeting.class,payload.getMethodName());
             Object returnValue= methodInvoker.Invoke(payload.getParameter());
 
-            payload=new TcpPayload(returnValue);
-            tcpRPC.Send2(payload);
+            payload=new Payload(returnValue);
+            tcpRPC.Send(payload);
         }
     }
 }

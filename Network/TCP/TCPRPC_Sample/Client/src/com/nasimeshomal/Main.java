@@ -13,11 +13,11 @@ public class Main {
         int port=9001;
         Socket socket=new Socket(address,port);
         Person person=new Person("Mahmood","Ramzani");
-	    TcpPayload payload=new TcpPayload("sayHello",person);
+	    Payload payload=new Payload("sayHello",person);
         TcpRPC tcpRPC=new TcpRPC(socket);
-        tcpRPC.Send2(payload);
+        tcpRPC.Send(payload);
 
-        payload= tcpRPC.Receive2();
+        payload= tcpRPC.Receive();
         System.out.println(payload.getReturnValue());
     }
 }
