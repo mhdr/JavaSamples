@@ -1,5 +1,7 @@
 package com.nasimeshomal;
 
+import org.json.simple.parser.ParseException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +23,17 @@ public class UdpRPC {
         this.setSocket(socket);
     }
 
-    public byte[] Serialize(SocketData socketData) throws IOException {
-        byte[] msgByte=socketData.getData();
+    public UdpRPC(DatagramSocket socket,int bufferSize)
+    {
+        this.setSocket(socket);
+        // TODO bufferSize
+    }
+
+    public byte[] Serialize(Payload payload) throws IOException {
+        byte[] msgByte=payload.Serialize();
         int sizeOfMsg=msgByte.length;
         byte[] sizeOfMsgByte= ByteBuffer.allocate(4).putInt(sizeOfMsg).array();
-        String methodNameToSend=socketData.getMethodName();
+        String methodNameToSend=payload.getMethodName();
         byte[] methodNameByte=methodNameToSend.getBytes("UTF-8");
         int sizeOfMethodName=methodNameByte.length;
         byte[] sizeOfMethodNameByte=ByteBuffer.allocate(4).putInt(sizeOfMethodName).array();
@@ -40,23 +48,15 @@ public class UdpRPC {
         return dataToSend;
     }
 
-    public void Send(SocketData socketData,InetAddress address,int port) throws IOException {
-        byte[] dataToSend= this.Serialize(socketData);
+    public void Send(Payload payload,InetAddress address,int port) throws IOException {
+        byte[] dataToSend= this.Serialize(payload);
         DatagramPacket outPacket=new DatagramPacket(dataToSend,dataToSend.length,address,port);
         this.socket.send(outPacket);
     }
 
-    public SocketData Receive() throws IOException {
-
-        byte[] sizeOfMethodNameByte=new byte[4];
-        DatagramPacket inPacket=new DatagramPacket(sizeOfMethodNameByte,sizeOfMethodNameByte.length);
+    public PayloadBinary ReceiveBinary() throws IOException, ParseException, ClassNotFoundException {
+        DatagramPacket inPacket=null;
         socket.receive(inPacket);
-
-        int sizeOfMethodName=ByteBuffer.wrap(sizeOfMethodNameByte).getInt();
-        byte[] methodNameByte=new byte[sizeOfMethodName];
-        inPacket=new DatagramPacket(methodNameByte,methodNameByte.length);
-        socket.receive(inPacket);
-        String methodName=new String(methodNameByte,"UTF-8");
 
         byte[] sizeofMsgByte=new byte[4];
         inPacket=new DatagramPacket(sizeofMsgByte,sizeofMsgByte.length);
@@ -66,9 +66,27 @@ public class UdpRPC {
         inPacket=new DatagramPacket(data,data.length);
         socket.receive(inPacket);
 
-        SocketData socketData=new SocketData(methodName,data);
+        PayloadBinary payload= Payload.DeserializeFromBinary(data);
 
-        return socketData;
+        return payload;
+    }
+
+    public PayloadJSON ReceiveJSON() throws IOException, ParseException {
+
+        DatagramPacket inPacket=null;
+        socket.receive(inPacket);
+
+        byte[] sizeofMsgByte=new byte[4];
+        inPacket=new DatagramPacket(sizeofMsgByte,sizeofMsgByte.length);
+        socket.receive(inPacket);
+        int sizeOfMsg= ByteBuffer.wrap(sizeofMsgByte).getInt();
+        byte[] data=new byte[sizeOfMsg];
+        inPacket=new DatagramPacket(data,data.length);
+        socket.receive(inPacket);
+
+        PayloadJSON payload= Payload.DeserializeFromJSON(data);
+
+        return payload;
     }
 
     public DatagramSocket getSocket() {

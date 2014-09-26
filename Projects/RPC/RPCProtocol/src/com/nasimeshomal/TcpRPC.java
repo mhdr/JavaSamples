@@ -1,5 +1,7 @@
 package com.nasimeshomal;
 
+import org.json.simple.parser.ParseException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +40,7 @@ public class TcpRPC {
         outputStream.flush();
     }
 
-    public Payload Receive() throws IOException, ClassNotFoundException {
+    public PayloadBinary ReceiveBinary() throws IOException, ClassNotFoundException {
         InputStream inputStream=this.socket.getInputStream();
 
         byte[] sizeofMsgByte=new byte[4];
@@ -47,7 +49,21 @@ public class TcpRPC {
         byte[] data=new byte[sizeOfMsg];
         inputStream.read(data);
 
-        Payload payload= Payload.Deserialize(data);
+        PayloadBinary payload= Payload.DeserializeFromBinary(data);
+
+        return payload;
+    }
+
+    public PayloadJSON ReceiveJSON() throws IOException, ClassNotFoundException, ParseException {
+        InputStream inputStream=this.socket.getInputStream();
+
+        byte[] sizeofMsgByte=new byte[4];
+        inputStream.read(sizeofMsgByte);
+        int sizeOfMsg= ByteBuffer.wrap(sizeofMsgByte).getInt();
+        byte[] data=new byte[sizeOfMsg];
+        inputStream.read(data);
+
+        PayloadJSON payload= Payload.DeserializeFromJSON(data);
 
         return payload;
     }
