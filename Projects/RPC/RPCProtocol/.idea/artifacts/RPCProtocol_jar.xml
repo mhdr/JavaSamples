@@ -3,8 +3,8 @@
     <output-path>$PROJECT_DIR$/out/artifacts/RPCProtocol_jar</output-path>
     <root id="archive" name="RPCProtocol.jar">
       <element id="module-output" name="RPCProtocol" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/Libs/json-simple-1.1.1.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/Libs/commons-lang3-3.3.2/commons-lang3-3.3.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../Serialization/JSON/ToJSON/lib/json-simple-1.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-lang3-3.3.2.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
