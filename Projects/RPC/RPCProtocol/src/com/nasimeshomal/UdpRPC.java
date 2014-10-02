@@ -24,68 +24,110 @@ public class UdpRPC {
         this.setBufferSize(bufferSize);
     }
 
-    public byte[] Serialize(Payload payload) throws IOException {
+    public void Send(Payload payload,InetAddress address,int port) throws IOException {
+        int headerLength=4+4+4+4;
         byte[] msgByte=payload.Serialize();
         int sizeOfMsg=msgByte.length;
         byte[] sizeOfMsgByte= ByteBuffer.allocate(4).putInt(sizeOfMsg).array();
 
-        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        byteArrayOutputStream.write(sizeOfMsgByte);
-        byteArrayOutputStream.write(msgByte);
-        byte[] dataToSend=byteArrayOutputStream.toByteArray();
+        int callerSequence=CallerSequence.getNextId();
+        byte[] callerSequenceByte=ByteBuffer.allocate(4).putInt(callerSequence).array();
 
-        return dataToSend;
+        int packetCapacity=this.bufferSize-headerLength;
+        int answer=sizeOfMsg/packetCapacity;
+        int remainder=sizeOfMsg % packetCapacity;
+
+        int lastFragmentNumber=0;
+        if (remainder==0)
+        {
+            lastFragmentNumber=answer;
+        }
+        else
+        {
+            lastFragmentNumber=answer+1;
+        }
+
+        int currentFragmentNumber=1;
+        byte[] lastFragmentNumberByte=ByteBuffer.allocate(4).putInt(lastFragmentNumber).array();
+
+        ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(msgByte);
+        DataInputStream dataInputStream=new DataInputStream(byteArrayInputStream);
+
+        while (lastFragmentNumber>=currentFragmentNumber)
+        {
+            int lengthOfCurrentData;
+
+            if (remainder!=0)
+            {
+                if (lastFragmentNumber==currentFragmentNumber)
+                {
+                    lengthOfCurrentData=remainder;
+                }
+                else
+                {
+                    lengthOfCurrentData=packetCapacity;
+                }
+            }
+            else
+            {
+                lengthOfCurrentData=packetCapacity;
+            }
+
+            byte[] dataToSend=new byte[lengthOfCurrentData];
+            dataInputStream.read(dataToSend);
+
+            int sizeOfCurrentMsg=dataToSend.length;
+            byte[] sizeOfCurrentMsgByte= ByteBuffer.allocate(4).putInt(sizeOfCurrentMsg).array();
+
+            ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+            byteArrayOutputStream.write(sizeOfCurrentMsgByte);
+            byteArrayOutputStream.write(callerSequenceByte);
+
+            byte[] currentFragmentNumberByte=ByteBuffer.allocate(4).putInt(currentFragmentNumber).array();
+            byteArrayOutputStream.write(currentFragmentNumberByte);
+            byteArrayOutputStream.write(lastFragmentNumberByte);
+            byteArrayOutputStream.write(dataToSend);
+
+            byte[] wholePacketInByte=byteArrayOutputStream.toByteArray();
+
+            byte[] data=ByteBuffer.allocate(this.bufferSize).put(wholePacketInByte).array();
+            DatagramPacket outPacket=new DatagramPacket(data,data.length,address,port);
+            this.socket.send(outPacket);
+
+            currentFragmentNumber++;
+        }
     }
 
-    public void Send(Payload payload,InetAddress address,int port) throws IOException {
-        byte[] dataToSend= this.Serialize(payload);
-        byte[] data=ByteBuffer.allocate(this.bufferSize).put(dataToSend).array();
-        DatagramPacket outPacket=new DatagramPacket(data,data.length,address,port);
-        this.socket.send(outPacket);
-    }
-
-    public UdpPayloadBinary ReceiveBinary() throws IOException, ParseException, ClassNotFoundException {
+    public UdpPacket Receive() throws IOException, ParseException {
         byte[] data=new byte[this.bufferSize];
         DatagramPacket inPacket=new DatagramPacket(data,data.length);
         socket.receive(inPacket);
 
-
-        byte[] sizeofMsgByte=new byte[4];
         ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(data);
         DataInputStream dataInputStream=new DataInputStream(byteArrayInputStream);
+
+        byte[] sizeofMsgByte=new byte[4];
         dataInputStream.read(sizeofMsgByte);
         int sizeOfMsg= ByteBuffer.wrap(sizeofMsgByte).getInt();
+
+        byte[] callerSequenceByte=new byte[4];
+        dataInputStream.read(callerSequenceByte);
+        int callerSequence=ByteBuffer.wrap(callerSequenceByte).getInt();
+
+        byte[] fragmentNumberByte=new byte[4];
+        dataInputStream.read(fragmentNumberByte);
+        int fragmentNumber=ByteBuffer.wrap(fragmentNumberByte).getInt();
+
+        byte[] lastFragmentNumberByte=new byte[4];
+        dataInputStream.read(lastFragmentNumberByte);
+        int lastFragmentNumber=ByteBuffer.wrap(lastFragmentNumberByte).getInt();
 
         byte[] realData=new byte[sizeOfMsg];
         dataInputStream.read(realData);
 
-        PayloadBinary payload= Payload.DeserializeFromBinary(realData);
-        UdpPayloadBinary payloadToReturn=UdpPayloadBinary.Create(payload);
-        payloadToReturn.setDatagramPacket(inPacket);
+        UdpPacket udpPacket=new UdpPacket(inPacket.getPort(),inPacket.getAddress(),callerSequence,fragmentNumber,lastFragmentNumber,realData);
 
-        return payloadToReturn;
-    }
-
-    public UdpPayloadJSON ReceiveJSON() throws IOException, ParseException {
-        byte[] data=new byte[this.bufferSize];
-        DatagramPacket inPacket=new DatagramPacket(data,data.length);
-        socket.receive(inPacket);
-
-
-        byte[] sizeofMsgByte=new byte[4];
-        ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(data);
-        DataInputStream dataInputStream=new DataInputStream(byteArrayInputStream);
-        dataInputStream.read(sizeofMsgByte);
-        int sizeOfMsg= ByteBuffer.wrap(sizeofMsgByte).getInt();
-
-        byte[] realData=new byte[sizeOfMsg];
-        dataInputStream.read(realData);
-
-        PayloadJSON payload= Payload.DeserializeFromJSON(realData);
-        UdpPayloadJSON payloadToReturn=UdpPayloadJSON.Create(payload);
-        payloadToReturn.setDatagramPacket(inPacket);
-
-        return payloadToReturn;
+        return udpPacket;
     }
 
     public void setSOTimeout(int timeout) throws SocketException {

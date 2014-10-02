@@ -2,36 +2,44 @@ package com.nasimeshomal;
 
 import org.json.simple.parser.ParseException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ParseException {
         int port=9001;
         DatagramSocket socket=new DatagramSocket(port);
+        UdpPacketTable udpPacketTable=UdpPacketTable.getInstance();
 
-        while (true)
+        Boolean endOfData=false;
+
+        while (!endOfData)
         {
-            //Socket socket=serverSocket.accept();
-
-            //TcpRPC tcpRPC=new TcpRPC(socket);
             UdpRPC udpRPC=new UdpRPC(socket);
 
-            UdpPayloadJSON payload= udpRPC.ReceiveJSON();
+            UdpPacket udpPacket=udpRPC.Receive();
+            int remain= udpPacketTable.addPacket(udpPacket);
 
-            System.out.println(payload.getMethodName());
-            System.out.println(payload.getParameter());
-
-            MethodInvoker methodInvoker=new MethodInvoker(Greeting.class,payload.getMethodName());
-            Object returnValue= methodInvoker.Invoke(payload.getParameter());
-
-            InetAddress address=payload.getDatagramPacket().getAddress();
-            int recvPort=payload.getDatagramPacket().getPort();
-
-            payload=new UdpPayloadJSON(returnValue);
-            udpRPC.Send(payload,address,recvPort);
+            if (remain==0)
+            {
+                endOfData=true;
+            }
         }
+
+        ArrayList<UdpPacket> packets=udpPacketTable.getPackets();
+        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+
+        for (UdpPacket packet:packets)
+        {
+            byteArrayOutputStream.write(packet.getData());
+        }
+
+        PayloadJSON payloadJSON=Payload.DeserializeFromJSON(byteArrayOutputStream.toByteArray());
+
+        System.out.println("");
     }
 }
