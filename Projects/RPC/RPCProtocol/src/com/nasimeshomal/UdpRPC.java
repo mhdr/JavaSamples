@@ -28,7 +28,6 @@ public class UdpRPC {
         int headerLength=4+4+4+4;
         byte[] msgByte=payload.Serialize();
         int sizeOfMsg=msgByte.length;
-        byte[] sizeOfMsgByte= ByteBuffer.allocate(4).putInt(sizeOfMsg).array();
 
         int callerSequence=CallerSequence.getNextId();
         byte[] callerSequenceByte=ByteBuffer.allocate(4).putInt(callerSequence).array();

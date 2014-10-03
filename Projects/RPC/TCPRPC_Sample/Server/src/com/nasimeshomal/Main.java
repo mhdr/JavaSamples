@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ParseException {
         int port=9001;
         DatagramSocket socket=new DatagramSocket(port);
-        UdpPacketTable udpPacketTable=UdpPacketTable.getInstance();
+        UdpReceivePacketTable udpPacketTable=UdpReceivePacketTable.getInstance();
 
         Boolean endOfData=false;
 

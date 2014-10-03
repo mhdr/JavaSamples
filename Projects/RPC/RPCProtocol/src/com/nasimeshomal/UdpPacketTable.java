@@ -7,24 +7,14 @@ import java.util.ArrayList;
 /**
  * Created by Mahmood on 10/3/2014.
  */
-public class UdpPacketTable {
+public abstract class UdpPacketTable {
     private static UdpPacketTable instance=null;
 
     private ArrayList<UdpPacket> packets;
 
-    private UdpPacketTable()
+    public UdpPacketTable()
     {
         packets=new ArrayList<UdpPacket>();
-    }
-
-    public static UdpPacketTable getInstance()
-    {
-        if (instance==null)
-        {
-            instance=new UdpPacketTable();
-        }
-
-        return instance;
     }
 
     /**
