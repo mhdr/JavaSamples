@@ -8,7 +8,7 @@
     </properties>
     <root id="root">
       <element id="archive" name="JavaFXApp.jar">
-        <element id="module-output" name="Basic_TCP_Socket" />
+        <element id="module-output" name="Basic_TCP_Socket_WithUI" />
       </element>
     </root>
   </artifact>
