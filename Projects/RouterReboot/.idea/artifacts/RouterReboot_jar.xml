@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="RouterReboot:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/RouterReboot_jar</output-path>
+    <root id="archive" name="RouterReboot.jar">
+      <element id="module-output" name="RouterReboot" />
+      <element id="extracted-dir" path="C:/JavaLibs/commons-net-3.3/commons-net-3.3.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
