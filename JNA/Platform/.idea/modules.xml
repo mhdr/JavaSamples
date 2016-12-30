@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Platform.iml" filepath="$PROJECT_DIR$/.idea/modules/Platform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Platform_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Platform_main.iml" group="Platform" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Platform_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Platform_test.iml" group="Platform" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Structure.iml" filepath="$PROJECT_DIR$/.idea/modules/Structure.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Structure_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Structure_main.iml" group="Structure" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Structure_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Structure_test.iml" group="Structure" />
+    </modules>
+  </component>
+</project>
